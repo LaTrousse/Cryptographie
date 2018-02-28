@@ -1,0 +1,10 @@
+Use a pseudo-code to describe the DES encryption which takes 64-bit input/output. 
+Define the subkeys for all rounds (a total of 768 bits) as input variables. 
+You are given the following functions/blocks (you can just use these without implementing how they work, 
+but define the other functions if you use others):
+
+-- IP (the initial permutation, taking 64 bits of input and outputting 64 bits)
+
+-- F (the round function, taking 32 bits of data and 48 bits of subkey and outputting 32 bits)
+
+-- FP (the final permutation, taking 64 bits of input and outputting 64 bits)

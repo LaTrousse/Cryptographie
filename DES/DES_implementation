@@ -1,0 +1,52 @@
+// using array notations in this assignment to make it clear and light : I will deal with inputs as if they were arrays of bits
+
+// Inputs
+message_in //64 bits
+keys //array of size 16 contaning the subkeys, ie keys[i] is the subkey for round i
+
+// Variables
+Declare right_block as a 32 bits block
+Declare left_block as a 32 bits block
+Declare XOR_result as a 32 bits block
+Declare message_out as a 64 bits block
+Declare loopcounter as an integer, set to 0
+
+// Functions given
+IP(message_in) // Initial permutation of the 64 bits message_in
+F(block, subkey) // Round function with inputs a 32 bits block and a 48 bits subkey
+FP(message_out) // Final permutation of the 64 bits message_out
+
+// XOR function
+function XOR(block1, block2) // where block1 and block2 have the same size
+  Set loopcounter to 0
+  for loopcounter = 0 to size(block1)-1
+    XOR(block1,block2)[i] = block1[i]+block2[i] mod 2
+  end for
+  return XOR(block1,block2)
+end function
+
+// DES implementation 1st part - Initial permutation and message cut in 2 blocks
+message_out = IP(message_in)
+for loopcounter = 0 to 31
+  left_block[loopcounter] = message_out[loopcounter]      // left_block takes the first 32 bits of message_out (left part of the message)
+  right_block[loopcounter] = message_out[32+loopcounter]  // right_block takes the last 32 bits of message_out (right part of the message)
+end for
+
+// DES implementation 2nd part - 16 rounds of F function and swap
+Set loopcounter to 0
+for loopcounter = 0 to 15
+  XOR_result = XOR(left_block, F(right_block, keys[loopcounter])) // the right block goes through the round function F, then it is XORed with the left_block
+  left_block = right_block  // the right_block goes to the left, first part of the swap
+  right_block = XOR_result  // the result of the XOR ans F functions goes to the right, second part of the swap and end of the round
+end for
+
+// DES implementation 3rd part blocks reunited and final permutation
+Set loopcounter to 0
+for loopcounter = 0 to 31
+  message_out[loopcounter] = left_block[loopcounter]      // left_block becomes the first 32 bits of message_out (left part of the message)
+  message_out[32+loopcounter] = right_block[loopcounter]  // right_block becomes the last 32 bits of message_out (right part of the message)
+end for
+message_out = FP(message_out)
+
+// Output
+return message_out
